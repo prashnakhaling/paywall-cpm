@@ -24,6 +24,7 @@ get_header();
 
                         <div class="entry-content">
                             <?php
+                            
                             if (!is_user_logged_in()) {
                                 // Display around 100 words of the post content
                                 echo wp_trim_words(get_the_content(), 100, '...');
