@@ -1,25 +1,23 @@
-<?php
+<form method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>">
+    <input type="hidden" name="action" value="paywall_cpm_register">
+    <?php wp_nonce_field('paywall_cpm_register', 'paywall_cpm_register_nonce'); ?>
 
-// Exit if accessed directly
-if (!defined('ABSPATH')) {
-    exit;
-}
+    <p>
+        <label for="username">Username:</label>
+        <input type="text" id="username" name="username" required>
+    </p>
 
-function cpm_paywall_registration_form()
-{
-    ob_start();
-?>
-   <div class="paywall_registration">
+    <p>
+        <label for="email">Email:</label>
+        <input type="email" id="email" name="email" required>
+    </p>
 
-   <form action="">
-    <label for="username">Username:</label>
-    <input type="text" name="username" >
-   </form>
-   </div>
+    <p>
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required>
+    </p>
 
-  
-<?php
-
-    return ob_get_clean();
-}
-add_shortcode('paywall_form', 'cpm_paywall_registration_form');
+    <p>
+        <input type="submit" value="Register">
+    </p>
+</form>
