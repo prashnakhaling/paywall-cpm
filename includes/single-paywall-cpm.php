@@ -27,9 +27,10 @@ get_header();
                             if (!is_user_logged_in()) {
                                 // Display around 100 words of the post content
                                 echo wp_trim_words(get_the_content(), 100, '...');
-                                ?>
-                                <button onclick="location.href='<?php echo wp_login_url(); ?>';">Log in to read more </button>
-                                <?php
+                            ?>
+                                <button onclick="location.href='<?php echo wp_login_url(get_permalink()); ?>';">Log in to read more</button>
+                            <?php
+
                             } else {
                                 // Display full content for logged-in users
                                 the_content();
@@ -37,7 +38,7 @@ get_header();
                             ?>
                         </div><!-- .entry-content -->
 
-                        
+
                     </article><!-- #post-<?php the_ID(); ?> -->
 
             <?php

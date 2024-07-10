@@ -1,23 +1,34 @@
-<form method="post" action="<?php echo esc_url(admin_url('admin-post.php')); ?>">
-    <input type="hidden" name="action" value="paywall_cpm_register">
-    <?php wp_nonce_field('paywall_cpm_register', 'paywall_cpm_register_nonce'); ?>
+<?php
+// Exit if accessed directly.
+if (!defined('ABSPATH')) {
+    exit;
+}
+get_header();
 
-    <p>
-        <label for="username">Username:</label>
-        <input type="text" id="username" name="username" required>
-    </p>
+?>
+<?php
+function registration_form_shortcode()
+{
+    ob_start();
+?>
+    <form id="registration-form" action="" method="post">
+        <!-- <input type="hidden" name="action" value="process_registration"> -->
 
-    <p>
-        <label for="email">Email:</label>
-        <input type="email" id="email" name="email" required>
-    </p>
+        <label for="user_name">Name</label>
+        <input type="text" name="user_name" id="user_name" required>
 
-    <p>
-        <label for="password">Password:</label>
-        <input type="password" id="password" name="password" required>
-    </p>
+        <label for="user_email">Email Address</label>
+        <input type="email" name="user_email" id="user_email" required>
 
-    <p>
+
+        <label for="user_password">Password</label>
+        <input type="password" name="user_password" id="user_password" required>
+
+
         <input type="submit" value="Register">
-    </p>
-</form>
+
+    </form>
+<?php
+    return ob_get_clean();
+}
+add_shortcode('registration_form', 'registration_form_shortcode');
