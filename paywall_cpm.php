@@ -24,3 +24,16 @@ function paywall_cpm_enqueue_scripts()
     wp_enqueue_script('paywall-cpm-script', PAYWALL_CPM_PLUGIN_URL . 'public/js/paywall-cpm-public-script.js', ['jquery'], null, true);
 }
 add_action('wp_enqueue_scripts', 'paywall_cpm_enqueue_scripts');
+
+//load single page
+function paywall_cpm_template($template)
+{
+    if (is_single() && !is_user_logged_in()) {
+        $new_template = locate_template(array('single-paywall-cpm.php'));
+        if ($new_template) {
+            return $new_template;
+        }
+    }
+    return $template;
+}
+add_filter('template_include', 'paywall_cpm_template');
