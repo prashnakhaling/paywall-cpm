@@ -1,82 +1,74 @@
 <?php
-// Register the settings page
-function paywall_cpm_register_settings_page()
+class Paywall_Admin
 {
-    add_options_page(
-        __('Paywall CPM Settings', 'paywall-cpm'),
-        __('Paywall CPM', 'paywall-cpm'),
-        'manage_options',
-        'paywall-cpm',
-        'paywall_cpm_settings_page_callback'
-    );
-}
-add_action('admin_menu', 'paywall_cpm_register_settings_page');
+    public function __construct()
+    {
+        add_action('admin_menu', array($this, 'add_admin_menu'));
+        add_action('admin_init', array($this, 'settings_init'));
+        add_action('admin_enqueue_scripts', array($this, 'enqueue_admin_scripts'));
+    }
 
-// Settings page callback
-function paywall_cpm_settings_page_callback()
-{
+    public function enqueue_admin_scripts()
+    {
+        wp_enqueue_style('paywall-admin-css', plugin_dir_url(__FILE__) . 'css/cpm-paywall-admin.css');
+        wp_enqueue_style('select2-css', 'https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css');
+        wp_enqueue_script('select2-js', 'https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js', array('jquery'), null, true);
+        wp_enqueue_script('paywall-admin-js', plugin_dir_url(__FILE__) . 'js/paywall-cpm-admin.js', array('jquery'), null, true);
+    }
+
+    public function add_admin_menu()
+    {
+        add_options_page('Paywall', 'Paywall', 'manage_options', 'paywall', array($this, 'options_page'));
+    }
+
+    public function settings_init()
+    {
+        register_setting('paywall', 'paywall_settings');
+
+        add_settings_section(
+            'paywall_section',
+            __('Paywall Settings', 'paywall'),
+            null,
+            'paywall'
+        );
+
+        add_settings_field(
+            'paywall_post_types',
+            __('Post Types', 'paywall'),
+            array($this, 'post_types_render'),
+            'paywall',
+            'paywall_section'
+        );
+    }
+
+    public function post_types_render()
+    {
+        $options = get_option('paywall_settings');
+        $post_types = get_post_types(array('public' => true), 'objects');
+        $selected_post_types = isset($options['paywall_post_types']) ? (array) $options['paywall_post_types'] : array();
 ?>
-    <div class="wrap">
-        <h1><?php _e('Paywall CPM Settings', 'paywall-cpm'); ?></h1>
-        <form method="post" action="options.php">
-            <?php
-            settings_fields('paywall_cpm_settings_group');
-            do_settings_sections('paywall-cpm');
+<select id='paywall_post_types' name='paywall_settings[paywall_post_types][]' multiple='multiple' style='width: 50%;'>
+    <?php foreach ($post_types as $post_type) : ?>
+    <option value='<?php echo esc_attr($post_type->name); ?>'
+        <?php if (in_array($post_type->name, $selected_post_types)) echo 'selected="selected"'; ?>>
+        <?php echo esc_html($post_type->label); ?></option>
+    <?php endforeach; ?>
+</select>
+<?php
+    }
+
+    public function options_page()
+    {
+    ?>
+<form action='options.php' method='post'>
+    <h2>Paywall</h2>
+    <?php
+            settings_fields('paywall');
+            do_settings_sections('paywall');
             submit_button();
             ?>
-        </form>
-    </div>
+</form>
 <?php
-}
-
-// Register settings and fields
-function paywall_cpm_register_settings()
-{
-    register_setting('paywall_cpm_settings_group', 'paywall_cpm_post_types');
-
-    add_settings_section(
-        'paywall_cpm_main_section',
-        __('Main Settings', 'paywall-cpm'),
-        null,
-        'paywall-cpm'
-    );
-
-    add_settings_field(
-        'paywall_cpm_post_types',
-        __('Select Post Types', 'paywall-cpm'),
-        'paywall_cpm_post_types_callback',
-        'paywall-cpm',
-        'paywall_cpm_main_section'
-    );
-}
-add_action('admin_init', 'paywall_cpm_register_settings');
-
-// Post types callback
-function paywall_cpm_post_types_callback()
-{
-    $selected_post_types = get_option('paywall_cpm_post_types', []);
-    $post_types = get_post_types(['public' => true], 'objects');
-
-    echo '<select id="paywall_cpm_post_types" name="paywall_cpm_post_types[]" multiple="multiple" style="width: 100%;">';
-    foreach ($post_types as $post_type) {
-        $selected = in_array($post_type->name, $selected_post_types) ? 'selected="selected"' : '';
-        echo '<option value="' . esc_attr($post_type->name) . '" ' . $selected . '>' . esc_html($post_type->label) . '</option>';
     }
-    echo '</select>';
 }
-
-// Enqueue Select2 scripts and styles
-function paywall_cpm_enqueue_admin_scripts($hook)
-{
-    if ($hook != 'settings_page_paywall-cpm') {
-        return;
-    }
-
-    // Enqueue Select2 CSS and JS
-    wp_enqueue_style('select2-css', 'https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/css/select2.min.css');
-    wp_enqueue_script('select2-js', 'https://cdnjs.cloudflare.com/ajax/libs/select2/4.0.13/js/select2.min.js', ['jquery'], null, true);
-
-    // Enqueue custom script to initialize Select2
-    wp_enqueue_script('paywall-cpm-admin-js', PAYWALL_CPM_PLUGIN_URL . 'admin/js/paywall-cpm-admin.js', ['jquery', 'select2-js'], null, true);
-}
-add_action('admin_enqueue_scripts', 'paywall_cpm_enqueue_admin_scripts');
+?>
