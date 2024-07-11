@@ -1,10 +1,41 @@
-.paywall-cpm-maindiv{
-    /* width:100%;
-    background-color: lavender; */
-}
-.cpm-paywall-header{
+.menu-item a {
+    display: flex;
+    align-items: center;
+  }
+  
+  .menu-item a::before {
+    content: "\f2f6"; /* This is the icon for login/logout */
+    font-family: FontAwesome;
+    margin-right: 8px;
+  }
+  
+  /* Adjust the icon for the logout link */
+  .menu-item a[href*="logout"]::before {
+    content: "\f2f5"; /* This is the icon for logout */
+  }
+  
+  .logout-message {
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #f8f9fa;
+    color: #333;
+    padding: 10px 20px;
+    border: 1px solid #ddd;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 5px;
+    z-index: 1000;
     text-align: center;
-}
-.paywall-article{
-    background-color: lavender;
-}
+    font-size: 16px;
+  }
+  
+  /* Add an animation to fade out the message after a few seconds */
+  .logout-message {
+    opacity: 1;
+    transition: opacity 5s ease-in-out;
+  }
+  
+  .logout-message.fade-out {
+    opacity: 0;
+  }
