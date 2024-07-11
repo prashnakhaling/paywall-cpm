@@ -47,27 +47,26 @@ class Paywall_Admin
         $post_types = get_post_types(array('public' => true), 'objects');
         $selected_post_types = isset($options['paywall_post_types']) ? (array) $options['paywall_post_types'] : array();
 ?>
-<select id='paywall_post_types' name='paywall_settings[paywall_post_types][]' multiple='multiple' style='width: 50%;'>
-    <?php foreach ($post_types as $post_type) : ?>
-    <option value='<?php echo esc_attr($post_type->name); ?>'
-        <?php if (in_array($post_type->name, $selected_post_types)) echo 'selected="selected"'; ?>>
-        <?php echo esc_html($post_type->label); ?></option>
-    <?php endforeach; ?>
-</select>
-<?php
+        <select id='paywall_post_types' name='paywall_settings[paywall_post_types][]' multiple='multiple' style='width: 50%;'>
+            <?php foreach ($post_types as $post_type) : ?>
+                <option value='<?php echo esc_attr($post_type->name); ?>' <?php if (in_array($post_type->name, $selected_post_types)) echo 'selected="selected"'; ?>>
+                    <?php echo esc_html($post_type->label); ?></option>
+            <?php endforeach; ?>
+        </select>
+    <?php
     }
 
     public function options_page()
     {
     ?>
-<form action='options.php' method='post'>
-    <h2>Paywall</h2>
-    <?php
+        <form action='options.php' method='post'>
+            <h2>Paywall</h2>
+            <?php
             settings_fields('paywall');
             do_settings_sections('paywall');
             submit_button();
             ?>
-</form>
+        </form>
 <?php
     }
 }
