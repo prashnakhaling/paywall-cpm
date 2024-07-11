@@ -6,22 +6,21 @@ if (!defined('ABSPATH')) {
 get_header();
 
 ?>
-<section>
-    <div>
+<section class="paywall-cpm-maindiv">
+    <div class="paywall-">
         <div>
-            <h2>PayWall</h2>
+            <h2 class="cpm-paywall-header">PayWall</h2>
         </div>
         <!-- main content for single page  -->
-        <div>
+        <div class= "paywall-article">
             <?php
             if (have_posts()) :
                 while (have_posts()) : the_post();
-            ?>
-                    <article id="post-<?php the_ID(); ?>" <?php post_class(); ?>>
+            ?>    
+           
                         <header class="entry-header">
                             <h1 class="entry-title"><?php the_title(); ?></h1>
-                        </header><!-- .entry-header -->
-
+                        </header>
                         <div class="entry-content">
                             <?php
                             
@@ -37,11 +36,10 @@ get_header();
                                 the_content();
                             }
                             ?>
-                        </div><!-- .entry-content -->
+                        </div>
 
 
-                    </article><!-- #post-<?php the_ID(); ?> -->
-
+                   
             <?php
                 endwhile;
             endif;

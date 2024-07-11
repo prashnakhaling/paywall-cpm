@@ -26,6 +26,8 @@ require_once PAYWALL_CPM_PLUGIN_DIR . 'admin/paywall-cpm-admin.php';
 function paywall_cpm_enqueue_scripts()
 {
     wp_enqueue_style('paywall-cpm-style', PAYWALL_CPM_PLUGIN_URL . 'public/css/paywall-cpm-public-style.css');
+    wp_enqueue_style('paywall-cpm-style', PAYWALL_CPM_PLUGIN_URL . 'public/css/single-paywall-cpm.css');
+
     wp_enqueue_script('paywall-cpm-script', PAYWALL_CPM_PLUGIN_URL . 'public/js/paywall-cpm-public-script.js', ['jquery'], null, true);
 }
 add_action('wp_enqueue_scripts', 'paywall_cpm_enqueue_scripts');
