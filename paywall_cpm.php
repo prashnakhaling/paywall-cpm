@@ -1,12 +1,10 @@
 <?php
 /*
 Plugin Name: Paywall
-Description: A plugin where use can log in and read article on the basis of the credits remaining in their account.
+Description: A plugin where use can log in and read article on the basis of the credits remaining in their account
 Version: 1.0
 Author: CPM
-License: GPL2
 Text Domain: paywall-cpm
-
 */
 
 if (!defined('ABSPATH')) {
@@ -66,4 +64,92 @@ class Paywall
             }
         }
     }
+
+    private function handle_registration()
+    {
+        $username = sanitize_user($_POST['username']);
+        $email = sanitize_email($_POST['email']);
+        $password = $_POST['password'];
+
+        $user_id = wp_create_user($username, $password, $email);
+
+        if (is_wp_error($user_id)) {
+            // Registration failed
+            wp_redirect(home_url('/register?error=1'));
+        } else {
+            // Registration successful
+            add_user_meta($user_id, 'paywall_credits', 5, true);
+            add_user_meta($user_id, 'paywall_last_renewed', current_time('timestamp'), true);
+            wp_redirect(home_url('/login?registered=1'));
+        }
+        exit;
+    }
+
+    private function handle_login()
+    {
+        $creds = array(
+            'user_login'    => $_POST['username'],
+            'user_password' => $_POST['password'],
+            'remember'      => isset($_POST['remember'])
+        );
+
+        $user = wp_signon($creds, is_ssl());
+
+        if (is_wp_error($user)) {
+            // Login failed
+            wp_redirect(home_url('/login?error=1'));
+        } else {
+            // Login successful
+            wp_redirect(home_url('/dashboard'));
+        }
+        exit;
+    }
+
+    public function login_form()
+    {
+        ob_start();
+        include plugin_dir_path(__FILE__) . 'templates/login-form.php';
+        return ob_get_clean();
+    }
+
+    public function register_form()
+    {
+        ob_start();
+        include plugin_dir_path(__FILE__) . 'templates/register-form.php';
+        return ob_get_clean();
+    }
+
+    public function dashboard()
+    {
+        ob_start();
+        include plugin_dir_path(__FILE__) . 'templates/dashboard.php';
+        return ob_get_clean();
+    }
+
+    public function schedule_monthly_credit_renewal()
+    {
+        if (!wp_next_scheduled('paywall_renew_monthly_credits')) {
+            wp_schedule_event(time(), 'monthly', 'paywall_renew_monthly_credits');
+        }
+    }
+
+    public function renew_monthly_credits()
+    {
+        $users = get_users();
+        foreach ($users as $user) {
+            update_user_meta($user->ID, 'paywall_credits', 5);
+            update_user_meta($user->ID, 'paywall_last_renewed', current_time('timestamp'));
+        }
+    }
+
+    public function add_monthly_schedule($schedules)
+    {
+        $schedules['monthly'] = array(
+            'interval' => 2592000, // 30 days in seconds
+            'display'  => __('Once Monthly')
+        );
+        return $schedules;
+    }
 }
+
+new Paywall();
