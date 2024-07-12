@@ -9,6 +9,7 @@ class Paywall_Public
         add_action('wp_logout', array($this, 'custom_logout_message'));
     }
 
+
     public function restrict_content($content)
     {
         global $post;
@@ -34,9 +35,17 @@ class Paywall_Public
         $options = get_option('paywall_settings', array());
         $post_types = isset($options['paywall_post_types']) ? (array) $options['paywall_post_types'] : array();
         // var_dump($post_types);
-        // Check if the current page is a singular page of a selected post type
-        if (in_array($post->post_type, $post_types)) {
-            if (!is_user_logged_in()) {
+
+        // Check if the current page is login, registration, or dashboard page
+        $login_page = is_page('login');
+        $register_page = is_page('register');
+        $dashboard_page = is_page('dashboard');
+        if (!$login_page && !$register_page && !$dashboard_page && in_array($post->post_type, $post_types)) {
+            // Check if the current page is a singular page of a selected post type
+            // if (in_array($post->post_type, $post_types)) {
+            if (current_user_can('administrator')) {
+                return $content; // Admin can view full content without restriction
+            } else if (!is_user_logged_in()) {
                 // For non-logged-in users, restrict content to 100 words
                 return wp_trim_words($content, 100, '... <a href="' . wp_login_url() . '">Login to read more</a>');
             } else {
@@ -95,5 +104,20 @@ class Paywall_Public
         add_action('wp_footer', function () {
             echo '<div class="logout-message">You have successfully logged out.</div>';
         });
+    }
+    // Shortcode callback for login form
+    public function login_form_shortcode()
+    {
+        ob_start();
+        include plugin_dir_path(__FILE__) . 'templates/login-form.php';
+        return ob_get_clean();
+    }
+
+    // Shortcode callback for registration form
+    public function register_form_shortcode()
+    {
+        ob_start();
+        include plugin_dir_path(__FILE__) . 'templates/register-form.php';
+        return ob_get_clean();
     }
 }
