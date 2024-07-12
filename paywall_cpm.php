@@ -1,15 +1,17 @@
 <?php
 /*
 Plugin Name: Paywall
-Description: A plugin where use can log in and read article on the basis of the credits remaining in their account
+Description: A plugin to add a paywall for selected post types.
 Version: 1.0
-Author: CPM
-Text Domain: paywall-cpm
+Author:Cpm
+
+Text Domain: paywall
 */
 
 if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly
 }
+
 class Paywall
 {
     public function __construct()

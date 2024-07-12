@@ -33,15 +33,8 @@ class Paywall_Public
                     if ($credits < 1) {
                         return wp_trim_words($content, 100, '... <a href="' . home_url('/dashboard') . '">Your credits for this month have expired.</a>');
                     } else {
-                        // Check if the user has already read this post
-                        $has_read = get_post_meta($post->ID, '_has_read_' . $user_id, true);
-
-                        if (!$has_read) {
-                            // Deduct one credit for reading and mark the post as read
-                            update_user_meta($user_id, 'paywall_credits', $credits - 1);
-                            update_post_meta($post->ID, '_has_read_' . $user_id, true);
-                        }
-
+                        // Deduct one credit for reading
+                        update_user_meta($user_id, 'paywall_credits', $credits - 1);
                         return $content;
                     }
                 }
