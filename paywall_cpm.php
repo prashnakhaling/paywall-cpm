@@ -11,6 +11,12 @@ Text Domain: paywall
 if (!defined('ABSPATH')) {
     exit;
 }
+function enqueue_user_registration_css() {
+    wp_enqueue_style('user-registration-css', plugin_dir_url(__FILE__) . 'public/css/user-registration.css');
+    wp_enqueue_style('user-login-css', plugin_dir_url(__FILE__) . 'public/css/user-login.css');
+
+}
+add_action('wp_enqueue_scripts', 'enqueue_user_registration_css');
 
 // Include necessary files
 require_once plugin_dir_path(__FILE__) . 'admin/paywall-cpm-admin.php';

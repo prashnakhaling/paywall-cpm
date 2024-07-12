@@ -1,0 +1,28 @@
+.paywall-login {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #f5dad2;
+  height: 30em;
+}
+.paywall-login-maindiv {
+  text-align: center;
+}
+.paywall-loginform {
+  background-color: white;
+  width: 27em;
+  height: 20em;
+  border-radius: 10px;
+}
+.login-title {
+  padding-top: 10px;
+}
+.form-detail {
+  width: 25em;
+  margin-left: 15px;
+  margin-bottom: 20px;
+  text-align: center;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid;
+}

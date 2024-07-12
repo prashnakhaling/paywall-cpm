@@ -1,4 +1,43 @@
-.paywal-registration{
-    background-color: lavender;
-    width:100px;
+.paywall-registration {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: #f5dad2;
+  height: 30em;
+  /* width:100px; */
+}
+.paywall-header-section {
+  text-align: center;
+}
+/* from styling */
+.paywall-form-section {
+  /* background-color: #c6dcba; */
+  background-color: white;
+  width: 27em;
+  height: 20em;
+  border-radius: 10px;
+}
+.paywall-heading {
+  padding-top: 15px;
+  text-align: center;
+}
+#form-detail {
+  width: 25em;
+  margin-left: 15px;
+  margin-bottom: 20px;
+  text-align: center;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid;
+}
+
+#paywall-registration-btn {
+  margin-top: 10px;
+  border-radius: 5px;
+  border: 1px solid;
+}
+.registration-btn {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
