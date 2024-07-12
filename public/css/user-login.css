@@ -15,14 +15,24 @@
   border-radius: 10px;
 }
 .login-title {
-  padding-top: 10px;
+  padding-top: 15px;
 }
-.form-detail {
+#username {
   width: 25em;
-  margin-left: 15px;
   margin-bottom: 20px;
   text-align: center;
   background: transparent;
   border: none;
   border-bottom: 1px solid;
+}
+#password {
+  width: 25em;
+  margin-bottom: 20px;
+  text-align: center;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid;
+}
+#login-btn{
+   margin-top:10px;
 }

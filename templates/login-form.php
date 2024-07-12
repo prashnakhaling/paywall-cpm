@@ -11,15 +11,15 @@
                 <?php wp_nonce_field('paywall_login', 'paywall_login_nonce'); ?>
 
                 <!-- <label for="username">Username</label> -->
-                <input type="text" name="username" id="username" class="form-detail" placeholder="Username">
+                <input type="text" name="username" id="username"  placeholder="Username">
 
                 <!-- <label for="password">Password</label> -->
-                <input type="password" name="password" id="password"class="form-detail" placeholder="Password">
+                <input type="password" name="password" id="password" placeholder="Password"><br>
 
                 <input type="checkbox" name="remember" id="remember">
                 <label for="remember">Remember Me</label><br>
 
-                <input type="submit" value="Login">
+                <input type="submit" value="Login" id="login-btn">
         </div>
     </div>
 
