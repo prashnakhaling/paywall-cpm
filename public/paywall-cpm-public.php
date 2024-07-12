@@ -13,8 +13,8 @@ class Paywall_Public
     {
         if (is_singular()) {
             global $post;
-            $options = get_option('paywall_settings');
-            $post_types = $options['paywall_post_types'] ?? array();
+            $options = get_option('paywall_settings', array());
+            $post_types = isset($options['paywall_post_types']) ? (array) $options['paywall_post_types'] : array();
 
             // Check if the current page is login, registration, or dashboard page
             $login_page = is_page('login');
@@ -30,11 +30,20 @@ class Paywall_Public
                     $user_id = get_current_user_id();
                     $credits = get_user_meta($user_id, 'paywall_credits', true) ?? 0;
 
+                    // Check if the credit deduction has already been processed for this post
+                    $viewed_posts = get_user_meta($user_id, 'viewed_posts', true) ?? array();
+
+                    if (in_array($post->ID, $viewed_posts)) {
+                        return $content;
+                    }
+
                     if ($credits < 1) {
                         return wp_trim_words($content, 100, '... <a href="' . home_url('/dashboard') . '">Your credits for this month have expired.</a>');
                     } else {
-                        // Deduct one credit for reading
+                        // Deduct one credit for reading and mark post as viewed
                         update_user_meta($user_id, 'paywall_credits', $credits - 1);
+                        $viewed_posts[] = $post->ID;
+                        update_user_meta($user_id, 'viewed_posts', $viewed_posts);
                         return $content;
                     }
                 }
@@ -48,6 +57,7 @@ class Paywall_Public
         wp_enqueue_style('paywall-public-css', plugin_dir_url(__FILE__) . 'css/paywall-cpm-public-style.css');
         wp_enqueue_script('paywall-public-js', plugin_dir_url(__FILE__) . 'js/paywall-cpm-public-script.js', array('jquery'), null, true);
         wp_enqueue_style('fontawesome', 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css');
+        wp_enqueue_style('user-registration-css', plugin_dir_url(__FILE__) . '../includes/css/user-registration.css');
     }
 
     public function add_login_logout_link($items, $args)
