@@ -11,49 +11,57 @@ class Paywall_Public
 
     public function restrict_content($content)
     {
-        if (is_singular()) {
-            global $post;
-            $options = get_option('paywall_settings', array());
-            $post_types = isset($options['paywall_post_types']) ? (array) $options['paywall_post_types'] : array();
+        global $post;
 
-            // Check if the current page is login, registration, or dashboard page
-            $login_page = is_page('login');
-            $register_page = is_page('register');
-            $dashboard_page = is_page('dashboard');
+        if (!is_singular()) {
+            return $content; // Exit early if not a singular post/page
+        }
 
-            if (!$login_page && !$register_page && !$dashboard_page && in_array($post->post_type, $post_types)) {
-                if (current_user_can('administrator')) {
-                    return $content; // Admin can view full content without restriction
-                } elseif (!is_user_logged_in()) {
-                    return wp_trim_words($content, 100, '... <a href="' . wp_login_url() . '">Login to read more</a>');
+        // Get paywall settings
+        $options = get_option('paywall_settings', array());
+        $post_types = isset($options['paywall_post_types']) ? (array) $options['paywall_post_types'] : array();
+        // var_dump($post_types);
+        // Check if the current page is a singular page of a selected post type
+        if (in_array($post->post_type, $post_types)) {
+            if (!is_user_logged_in()) {
+                // For non-logged-in users, restrict content to 100 words
+                return wp_trim_words($content, 100, '... <a href="' . wp_login_url() . '">Login to read more</a>');
+            } else {
+                $user_id = get_current_user_id();
+                $credits = (int) get_user_meta($user_id, 'paywall_credits', true);
+                $viewed_posts = get_user_meta($user_id, 'viewed_posts', true) ?: array();
+
+                // Admins can view full content without needing credits
+                if (current_user_can('manage_options')) {
+                    return $content;
+                }
+
+                // Check if the user has already viewed this post
+                if (in_array($post->ID, $viewed_posts)) {
+                    return $content; // Show full content if already viewed
+                }
+
+                // Check if credits are available
+                if ($credits > 0) {
+                    // Deduct one credit for reading
+                    update_user_meta($user_id, 'paywall_credits', $credits - 1);
+                    $viewed_posts[] = $post->ID;
+                    update_user_meta($user_id, 'viewed_posts', $viewed_posts);
+
+                    return $content; // Show full content after deducting credit
                 } else {
-                    $user_id = get_current_user_id();
-                    $credits = get_user_meta($user_id, 'paywall_credits', true) ?? 0;
-
-                    // Check if the credit deduction has already been processed for this post
-                    $viewed_posts = get_user_meta($user_id, 'viewed_posts', true) ?? array();
-
-                    if (in_array($post->ID, $viewed_posts)) {
-                        return $content;
-                    }
-
-                    if ($credits < 1) {
-                        return wp_trim_words($content, 100, '... <a href="' . home_url('/dashboard') . '">Your credits for this month have expired.</a>');
-                    } else {
-                        // Deduct one credit for reading and mark post as viewed
-                        update_user_meta($user_id, 'paywall_credits', $credits - 1);
-                        $viewed_posts[] = $post->ID;
-                        update_user_meta($user_id, 'viewed_posts', $viewed_posts);
-                        return $content;
-                    }
+                    // No credits left, show 100 words and credit expired message
+                    return wp_trim_words($content, 100, '... <a href="' . home_url('/dashboard') . '">Your credits for this month have expired.</a>');
                 }
             }
         }
-        return $content;
+
+        return $content; // Return original content if not restricted
     }
 
     public function enqueue_public_scripts()
     {
+        // Enqueue necessary scripts and styles
         wp_enqueue_style('paywall-public-css', plugin_dir_url(__FILE__) . 'css/paywall-cpm-public-style.css');
         wp_enqueue_script('paywall-public-js', plugin_dir_url(__FILE__) . 'js/paywall-cpm-public-script.js', array('jquery'), null, true);
         wp_enqueue_style('fontawesome', 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css');
