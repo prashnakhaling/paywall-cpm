@@ -57,7 +57,6 @@ class Paywall_Public
         wp_enqueue_style('paywall-public-css', plugin_dir_url(__FILE__) . 'css/paywall-cpm-public-style.css');
         wp_enqueue_script('paywall-public-js', plugin_dir_url(__FILE__) . 'js/paywall-cpm-public-script.js', array('jquery'), null, true);
         wp_enqueue_style('fontawesome', 'https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css');
-        wp_enqueue_style('user-registration-css', plugin_dir_url(__FILE__) . '../includes/css/user-registration.css');
     }
 
     public function add_login_logout_link($items, $args)

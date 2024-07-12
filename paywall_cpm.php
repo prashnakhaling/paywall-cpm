@@ -11,6 +11,10 @@ Text Domain: paywall
 if (!defined('ABSPATH')) {
     exit; // Exit if accessed directly
 }
+function enqueue_user_registration_css() {
+    wp_enqueue_style('user-registration-css', plugin_dir_url(__FILE__) . 'public/css/user-registration.css');
+}
+add_action('wp_enqueue_scripts', 'enqueue_user_registration_css');
 
 class Paywall
 {
