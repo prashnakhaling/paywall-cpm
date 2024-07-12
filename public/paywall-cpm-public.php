@@ -12,9 +12,22 @@ class Paywall_Public
     public function restrict_content($content)
     {
         global $post;
+        // var_dump($content);
+        // Get the ID of the home page
+        // $home_page_id = get_option('page_on_front');
+        // var_dump($home_page_id);
+
+        // if (is_singular() && $post->ID === $home_page_id) {
+        //     return $content;
+        //     // var_dump($content);
+        // }
+
+        if (is_front_page()) {
+            return $content;
+        }
 
         if (!is_singular()) {
-            return $content; // Exit early if not a singular post/page
+            return $content;
         }
 
         // Get paywall settings
