@@ -105,19 +105,4 @@ class Paywall_Public
             echo '<div class="logout-message">You have successfully logged out.</div>';
         });
     }
-    // Shortcode callback for login form
-    public function login_form_shortcode()
-    {
-        ob_start();
-        include plugin_dir_path(__FILE__) . 'templates/login-form.php';
-        return ob_get_clean();
-    }
-
-    // Shortcode callback for registration form
-    public function register_form_shortcode()
-    {
-        ob_start();
-        include plugin_dir_path(__FILE__) . 'templates/register-form.php';
-        return ob_get_clean();
-    }
 }
