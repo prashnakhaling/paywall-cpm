@@ -60,7 +60,7 @@ class Paywall_Public
 
                 // Check if the user has already viewed this post
                 if (in_array($post->ID, $viewed_posts)) {
-                    return $content; // Show full content if already viewed
+                    return $content;
                 }
 
                 // Check if credits are available
